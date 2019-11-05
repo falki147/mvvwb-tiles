@@ -1,0 +1,64 @@
+.mvvwb-tiles {
+    width: 100%;
+    max-width: 600px;
+
+    .item-container {
+        position: relative;
+        width: 100%;
+
+        .item {
+            position: absolute;
+
+            .content {
+                position: absolute;
+                border-radius: 5px;
+                border: 2px solid;
+                border-style: dashed;
+                left: 1px;
+                right: 1px;
+                top: 1px;
+                bottom: 1px;
+                cursor: pointer;
+            }
+
+            &.selected .content {
+                border-style: solid;
+            }
+        }
+
+        .spacer {
+            width: 100%;
+        }
+    }
+
+    .item-data {
+        display: table;
+        width: 100%;
+
+        .row {
+            display: table-row;
+
+            .cell {
+                display: table-cell;
+                vertical-align: middle;
+            }
+
+            &.button-row {
+                text-align: right;
+
+                .button {
+                    margin: 5px 0 0 5px;
+                }
+            }
+        }
+
+        input, select {
+            display: block;
+            width: 100%;
+
+            &.invalid {
+                background-color: #f66;
+            }
+        }
+    }
+}

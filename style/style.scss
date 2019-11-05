@@ -1,0 +1,103 @@
+@import 'variables';
+
+.tiles {
+    position: relative;
+    display: none;
+
+    .tiles-inner {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+
+        .tile {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+
+        a.tile {
+            &::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background: #fff;
+                opacity: 0;
+                transition: opacity 0.25s ease;
+            }
+    
+            &:hover, &:focus {
+                &::after {
+                    opacity: 0.25;
+                }
+            }
+
+            &:focus-within {
+                &::after {
+                    opacity: 0.25;
+                }
+            }
+        }
+
+        .facebook, .youtube, .instagram {
+            &::before {
+                content: "";
+                position: absolute;
+                left: 10%;
+                right: 10%;
+                top: 10%;
+                bottom: 10%;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+            }
+        }
+
+        .facebook {
+            background: #3b5998;
+
+            &::before {
+                background-image: url("facebook.svg");
+            }
+        }
+
+        .youtube {
+            background: #db3a37;
+
+            &::before {
+                background-image: url("youtube.svg");
+            }
+        }
+
+        .instagram {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+
+            &::before {
+                background-image: url("instagram.svg");
+            }
+        }
+    }
+
+    @media only screen and (min-width: $breakpoint-tablet) {
+        &.tiles-desktop {
+            display: block;
+        }
+    }
+
+    @media only screen and (min-width: $breakpoint-mobile) and (max-width: $breakpoint-tablet) {
+        &.tiles-tablet {
+            display: block;
+        }
+    }
+
+    @media only screen and (max-width: $breakpoint-mobile) {
+        &.tiles-mobile {
+            display: block;
+        }
+    }
+}

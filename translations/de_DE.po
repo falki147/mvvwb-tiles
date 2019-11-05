@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2019-10-15T16:34:44+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.3.0\n"
+"X-Domain: mvvwb-tiles\n"
+
+#: Tiles/RegisterHelper.php:9
+#: Tiles/TilesMetabox.php:18
+#: Tiles/TilesWidget.php:12
+msgid "Tiles"
+msgstr "Kacheln"
+
+#: Tiles/RegisterHelper.php:10
+msgid "Add Tiles"
+msgstr "Kacheln hinzufügen"
+
+#: Tiles/RegisterHelper.php:11
+msgid "Edit Tiles"
+msgstr "Kacheln bearbeiten"
+
+#: Tiles/RegisterHelper.php:49
+msgid "Delete"
+msgstr "Löschen"
+
+#: Tiles/RegisterHelper.php:50
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: Tiles/RegisterHelper.php:51
+msgid "Type"
+msgstr "Type"
+
+#: Tiles/RegisterHelper.php:52
+msgid "X"
+msgstr "X"
+
+#: Tiles/RegisterHelper.php:53
+msgid "Y"
+msgstr "Y"
+
+#: Tiles/RegisterHelper.php:54
+msgid "Width"
+msgstr "Breite"
+
+#: Tiles/RegisterHelper.php:55
+msgid "Height"
+msgstr "Höhe"
+
+#: Tiles/RegisterHelper.php:56
+msgid "Title"
+msgstr "Titel"
+
+#: Tiles/RegisterHelper.php:57
+msgid "Post ID"
+msgstr "Beitrags ID"
+
+#: Tiles/RegisterHelper.php:58
+msgid "URL"
+msgstr "URL"
+
+#: Tiles/RegisterHelper.php:59
+msgid "Icon"
+msgstr "Icon"
+
+#: Tiles/TilesWidget.php:67
+msgid "Desktop Tiles"
+msgstr "Desktop Kacheln"
+
+#: Tiles/TilesWidget.php:68
+msgid "Tablet Tiles"
+msgstr "Tablet Kacheln"
+
+#: Tiles/TilesWidget.php:69
+msgid "Mobile Tiles"
+msgstr "Mobil Kacheln"
+
+#: Tiles/TilesWidget.php:89
+msgid "None"
+msgstr "Keine ausgewählt"
+
+#: Tiles/Views/TilesWidgetView.php:3
+msgid "Recent Posts"
+msgstr "Neueste Beiträge"
