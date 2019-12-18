@@ -1,14 +1,14 @@
 const { src, dest, parallel, watch } = require("gulp");
-const autoprefixer = require('autoprefixer');
+const autoprefixer = require("autoprefixer");
 const concat = require("gulp-concat");
 const gettextParser = require("gettext-parser");
 const minifyCSS = require("gulp-csso");
-const minimist = require('minimist');
-const postcss = require('gulp-postcss');
-const rename = require('gulp-rename');
+const minimist = require("minimist");
+const postcss = require("gulp-postcss");
+const rename = require("gulp-rename");
 const sass = require("gulp-sass");
 const sourcemaps = require("gulp-sourcemaps");
-const through = require('through2');
+const through = require("through2");
 const uglify = require("gulp-uglify");
 
 const argv = minimist(process.argv.slice(2));
