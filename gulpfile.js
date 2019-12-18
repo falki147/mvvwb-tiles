@@ -25,6 +25,11 @@ const cssAdminSources = [
     "style/admin/**/*.scss"
 ];
 
+const jsSources = [
+    "js/**/*.js",
+    "!js/admin/**/*.js"
+];
+
 const jsAdminSources = [
     "js/admin/**/*.js"
 ];
@@ -77,6 +82,22 @@ function cssAdmin() {
     return stream.pipe(dest(destDir));
 }
 
+function js() {
+    let stream = src(jsSources);
+
+    if (writeSourcemap)
+        stream = stream.pipe(sourcemaps.init());
+
+    stream = stream
+        .pipe(concat("index.js"))
+        .pipe(uglify());
+
+    if (writeSourcemap)
+        stream = stream.pipe(sourcemaps.write("./"));
+
+    return stream.pipe(dest(destDir));
+}
+
 function jsAdmin() {
     let stream = src(jsAdminSources);
 
@@ -120,6 +141,7 @@ function translations() {
 const tasks = [
     { task: css, source: cssSources },
     { task: cssAdmin, source: cssAdminSources },
+    { task: js, source: jsSources },
     { task: jsAdmin, source: jsAdminSources },
     { task: php, source: phpSources },
     { task: assets, source: assetSources },

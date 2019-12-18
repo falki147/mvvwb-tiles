@@ -83,6 +83,22 @@
         }
     }
 
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: #fff;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    &:not(.loaded)::after {
+        opacity: 1;
+    }
+
     @media only screen and (min-width: $breakpoint-tablet) {
         &.tiles-desktop {
             display: block;

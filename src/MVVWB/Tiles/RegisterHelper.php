@@ -31,6 +31,8 @@ class RegisterHelper {
         );
 
         wp_enqueue_style('mvvwb-tiles-css', MVVWB_TILES_BASE . 'style.css');
+
+        wp_enqueue_script('mvvwb-index', MVVWB_TILES_BASE . 'index.js');
     }
 
     private static function widgetsInit() {
