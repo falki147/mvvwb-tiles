@@ -57,7 +57,7 @@ function css() {
         .pipe(concat("style.css"))
         .pipe(postcss([ autoprefixer() ]))
         .pipe(minifyCSS());
-    
+
     if (writeSourcemap)
         stream = stream.pipe(sourcemaps.write("./"));
 
@@ -75,7 +75,7 @@ function cssAdmin() {
         .pipe(concat("admin.css"))
         .pipe(postcss([ autoprefixer() ]))
         .pipe(minifyCSS());
-    
+
     if (writeSourcemap)
         stream = stream.pipe(sourcemaps.write("./"));
 

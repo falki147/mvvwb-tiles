@@ -1,8 +1,19 @@
 <?php
+/**
+ * Defines RegisterHelper class
+ */
 
 namespace MVVWB\Tiles;
 
+/**
+ * Provides functionality for registering post types, scripts, etc.
+ *
+ * This class is not intended to be intantiated
+ */
 class RegisterHelper {
+    /**
+     * Initilize post type and load styles/scripts
+     */
     private static function init() {
         register_post_type('tiles', [
             'labels' => [
@@ -35,14 +46,23 @@ class RegisterHelper {
         wp_enqueue_script('mvvwb-tiles-index', MVVWB_TILES_BASE . 'index.js');
     }
 
+    /**
+     * Register widgets
+     */
     private static function widgetsInit() {
         register_widget(new TilesWidget);
     }
 
+    /**
+     * Add metaboxes
+     */
     private static function addMetaBoxes() {
         TilesMetabox::addMetabox();
     }
 
+    /**
+     * Load admin scripts, styles and localized text entries
+     */
     private static function adminAddScripts() {
         wp_enqueue_script('mvvwb-tiles-admin-js');
         wp_enqueue_style('mvvwb-tiles-admin-css', MVVWB_TILES_BASE . 'admin.css', false, '1.0.0');
@@ -62,10 +82,21 @@ class RegisterHelper {
         ]);
     }
 
+    /**
+     * Save metaboxes
+     *
+     * This function will also be called even when the metabox itself isn't active. The data is
+     * taken from the $_POST variable.
+     *
+     * @param int $postID id of the post which was edited
+     */
     private static function saveMetaBoxes($postID) {
         TilesMetabox::saveMetabox($postID, $_POST);
     }
 
+    /**
+     * Register hooks for initializing theme
+     */
     public static function register() {
         load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANLATIONS);
 

@@ -2,7 +2,7 @@
     function loaded(src, cb) {
         var image = new Image();
         image.src = src;
-        
+
         if (image.loaded)
             cb();
         else

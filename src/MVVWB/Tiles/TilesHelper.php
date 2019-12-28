@@ -1,12 +1,32 @@
 <?php
+/**
+ * Defines TilesHelper class
+ */
 
 namespace MVVWB\Tiles;
 
+/**
+ * Helps with loading and saving the tiles data
+ *
+ * This class is not intended to be intantiated
+ */
 class TilesHelper {
+    /**
+     * Retrieves the tiles data from a post object
+     *
+     * @param \WP_Post $post the post where to get the data from
+     * @return Tile[] the tiles
+     */
     public static function getTilesData($post) {
         return json_decode(get_post_meta($post->ID, 'mvvwb_tiles', true));
     }
 
+    /**
+     * Sets the tiles data of the given post
+     *
+     * @param \WP_Post $post the post where the data should be set
+     * @param Tile[] $data the tiles data
+     */
     public static function setTilesData($post, $data) {
         usort($data, function ($a, $b) {
             if ($a->y != $b->y)
@@ -18,6 +38,12 @@ class TilesHelper {
         update_post_meta($post->ID, 'mvvwb_tiles', json_encode($data));
     }
 
+    /**
+     * Calculates the bounds of the tiles
+     *
+     * @param Tile[] $data the tiles data
+     * @return int[] an integer array containing x, y, width and height values
+     */
     public static function getDimensions($data) {
         if (!$data)
             return [ 0, 0, 0, 0 ];

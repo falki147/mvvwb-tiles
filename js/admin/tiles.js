@@ -361,7 +361,7 @@ RowElement.prototype._dataChanged = function () {
 
     if (this._types.indexOf(this._view.getSelection().type) < 0)
         return;
-    
+
     this._row.style.display = "table-row";
 };
 
