@@ -12,9 +12,21 @@ namespace MVVWB\Tiles;
  */
 class RegisterHelper {
     /**
-     * Setup scripts
+     * Register hooks for initializing plugin
+     */
+    public static function register() {
+        add_action('widgets_init', function () { self::widgetsInit(); });
+        add_action('add_meta_boxes', function () { self::addMetaBoxes(); });
+        add_action('save_post', function ($postID) { self::saveMetaBoxes($postID); });
+        add_action('plugins_loaded', function () { self::setup(); });
+    }
+
+    /**
+     * Setup translations, scripts and post type
      */
     private static function setup() {
+        load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANLATIONS);
+
         wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css');
         wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js');
 
@@ -34,12 +46,7 @@ class RegisterHelper {
             'url'    => __('URL', 'mvvwb-tiles'),
             'icon'   => __('Icon', 'mvvwb-tiles')
         ]);
-    }
 
-    /**
-     * Initilize post type and load styles/scripts
-     */
-    private static function init() {
         register_post_type('tiles', [
             'labels' => [
                 'name'      => __('Tiles', 'mvvwb-tiles'),
@@ -85,18 +92,5 @@ class RegisterHelper {
      */
     private static function saveMetaBoxes($postID) {
         TilesMetabox::saveMetabox($postID, $_POST);
-    }
-
-    /**
-     * Register hooks for initializing theme
-     */
-    public static function register() {
-        load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANLATIONS);
-
-        add_action('init', function () { self::init(); });
-        add_action('widgets_init', function () { self::widgetsInit(); });
-        add_action('add_meta_boxes', function () { self::addMetaBoxes(); });
-        add_action('save_post', function ($postID) { self::saveMetaBoxes($postID); });
-        add_action('after_setup_theme', function () { self::setup(); });
     }
 }
