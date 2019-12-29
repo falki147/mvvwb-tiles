@@ -12,6 +12,31 @@ namespace MVVWB\Tiles;
  */
 class RegisterHelper {
     /**
+     * Setup scripts
+     */
+    private static function setup() {
+        wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css');
+        wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js');
+
+        wp_register_style('mvvwb-tiles-admin', MVVWB_TILES_BASE . 'admin.css');
+        wp_register_script('mvvwb-tiles-admin', MVVWB_TILES_BASE . 'admin.js');
+
+        wp_localize_script('mvvwb-tiles-admin', 'mvvwbTilesI18n', [
+            'delete' => __('Delete', 'mvvwb-tiles'),
+            'add'    => __('Add', 'mvvwb-tiles'),
+            'type'   => __('Type', 'mvvwb-tiles'),
+            'x'      => __('X', 'mvvwb-tiles'),
+            'y'      => __('Y', 'mvvwb-tiles'),
+            'width'  => __('Width', 'mvvwb-tiles'),
+            'height' => __('Height', 'mvvwb-tiles'),
+            'title'  => __('Title', 'mvvwb-tiles'),
+            'post'   => __('Post ID', 'mvvwb-tiles'),
+            'url'    => __('URL', 'mvvwb-tiles'),
+            'icon'   => __('Icon', 'mvvwb-tiles')
+        ]);
+    }
+
+    /**
      * Initilize post type and load styles/scripts
      */
     private static function init() {
@@ -34,16 +59,6 @@ class RegisterHelper {
             'show_in_rest'      => false,
             'menu_icon'         => 'dashicons-layout'
         ]);
-
-        wp_register_script(
-            'mvvwb-tiles-admin-js',
-            MVVWB_TILES_BASE . 'admin.js',
-            []
-        );
-
-        wp_enqueue_style('mvvwb-tiles-css', MVVWB_TILES_BASE . 'style.css');
-
-        wp_enqueue_script('mvvwb-tiles-index', MVVWB_TILES_BASE . 'index.js');
     }
 
     /**
@@ -58,28 +73,6 @@ class RegisterHelper {
      */
     private static function addMetaBoxes() {
         TilesMetabox::addMetabox();
-    }
-
-    /**
-     * Load admin scripts, styles and localized text entries
-     */
-    private static function adminAddScripts() {
-        wp_enqueue_script('mvvwb-tiles-admin-js');
-        wp_enqueue_style('mvvwb-tiles-admin-css', MVVWB_TILES_BASE . 'admin.css', false, '1.0.0');
-
-        wp_localize_script('mvvwb-tiles-admin-js', 'mvvwbTilesI18n', [
-            'delete' => __('Delete', 'mvvwb-tiles'),
-            'add'    => __('Add', 'mvvwb-tiles'),
-            'type'   => __('Type', 'mvvwb-tiles'),
-            'x'      => __('X', 'mvvwb-tiles'),
-            'y'      => __('Y', 'mvvwb-tiles'),
-            'width'  => __('Width', 'mvvwb-tiles'),
-            'height' => __('Height', 'mvvwb-tiles'),
-            'title'  => __('Title', 'mvvwb-tiles'),
-            'post'   => __('Post ID', 'mvvwb-tiles'),
-            'url'    => __('URL', 'mvvwb-tiles'),
-            'icon'   => __('Icon', 'mvvwb-tiles')
-        ]);
     }
 
     /**
@@ -103,7 +96,7 @@ class RegisterHelper {
         add_action('init', function () { self::init(); });
         add_action('widgets_init', function () { self::widgetsInit(); });
         add_action('add_meta_boxes', function () { self::addMetaBoxes(); });
-        add_action('admin_enqueue_scripts', function () { self::adminAddScripts(); });
         add_action('save_post', function ($postID) { self::saveMetaBoxes($postID); });
+        add_action('after_setup_theme', function () { self::setup(); });
     }
 }

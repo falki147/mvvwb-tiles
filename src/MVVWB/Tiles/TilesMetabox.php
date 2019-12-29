@@ -39,6 +39,9 @@ class TilesMetabox {
             'tiles-box',
             __('Tiles', 'mvvwb-tiles'),
             function ($post) {
+                wp_enqueue_style('mvvwb-tiles-admin');
+                wp_enqueue_script('mvvwb-tiles-admin');
+
                 $data = TilesHelper::getTilesData($post);
 
                 // Set default values if no data has been assigned yet

@@ -48,6 +48,10 @@ class TilesWidget extends \WP_Widget {
         if (!$instance[self::TILES_NAME])
             return;
 
+        // Load style/scripts
+        wp_enqueue_style('mvvwb-tiles');
+        wp_enqueue_script('mvvwb-tiles');
+
         $tiles = get_post((int) $instance[self::TILES_NAME]);
 
         $tilesTablet = $instance[self::TILESTABLET_NAME] ?
