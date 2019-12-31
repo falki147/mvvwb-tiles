@@ -129,240 +129,242 @@ Display.prototype._getBounds = function (data) {
     return { x: x1, y: y1, width: x2 - x1, height: y2 - y1 };
 };
 
-function NumberInputElement(view, name, positive) {
-    view.onSelectionChanged(this._dataChanged.bind(this));
-    view.onDataChanged(this._dataChanged.bind(this));
+function NumberInputElement() {
+    var element = document.createElement("input");
+    element.type = "text";
+    element.value = "0";
 
-    var input = document.createElement("input");
-    input.type = "text";
+    element.addEventListener("change", this._inputChanged.bind(this));
+    element.addEventListener("keyup", this._inputChanged.bind(this));
+    element.addEventListener("keydown", this._keyDown.bind(this));
 
-    input.addEventListener("change", this._onChange.bind(this));
-    input.addEventListener("keyup", this._onChange.bind(this));
-    input.addEventListener("keydown", this._keyDown.bind(this));
+    Object.defineProperty(this, "value", {
+        get: function() { return this._value; },
+        set: this._setValue
+    });
 
-    this._view = view;
-    this._input = input;
-    this._name = name;
-    this._positive = Boolean(positive);
+    Object.defineProperty(this, "disabled", {
+        get: function() { return this.element.disabled; },
+        set: this._setDisabled
+    });
 
-    this._dataChanged();
+    this.element = element;
+    this.validator = function () { return true };
+
+    this._value = 0;
+    this._onChange = [];
 }
 
-NumberInputElement.prototype.getElement = function () {
-    return this._input;
+NumberInputElement.prototype.onChange = function (cb) {
+    this._onChange.push(cb);
 };
 
-NumberInputElement.prototype._dataChanged = function () {
-    this._input.classList.remove("invalid");
-
-    if (this._view.getSelection() === null) {
-        this._input.disabled = true;
-        this._input.value = "";
-    }
-    else {
-        var item = this._view.getSelection();
-
-        this._input.disabled = false;
-        this._input.value = item[this._name];
+NumberInputElement.prototype._setValue = function (value) {
+    if (this._value !== value) {
+        this._value = value;
+        this.element.value = value.toString();
+        this._validate();
     }
 };
 
-NumberInputElement.prototype._onChange = function () {
-    if (this._view.getSelection() === null)
-        return;
+NumberInputElement.prototype._setDisabled = function (disabled) {
+    if (this.element.disabled !== disabled) {
+        this.element.disabled = disabled;
 
-    var value = Number(this._input.value);
+        if (disabled) {
+            this.element.value = "";
+            this.element.classList.remove("invalid");
+        }
+        else {
+            this.element.value = this.value.toString();
+            this._validate();
+        }
+    }
+};
 
-    if (isNaN(value) || (this._positive && value < 0)) {
-        this._input.classList.add("invalid");
-        return;
+NumberInputElement.prototype._validate = function () {
+    this.element.classList.remove("invalid");
+
+    if (isNaN(this.element.value) || !this.validator(Number(this.element.value))) {
+        this.element.classList.add("invalid");
+        return false;
     }
 
-    this._input.classList.remove("invalid");
+    return true;
+};
 
-    if (this._view.getSelection()[this._name] == value.toString())
-        return;
+NumberInputElement.prototype._inputChanged = function () {
+    if (this._validate()) {
+        this._value = Number(this.element.value);
+        this._triggerChange();
+    }
+};
 
-    this._view.getSelection()[this._name] = value;
-    this._view.triggerChange();
+NumberInputElement.prototype._triggerChange = function () {
+    for (var i = 0; i < this._onChange.length; ++i)
+        this._onChange[i].call(this);
 };
 
 NumberInputElement.prototype._keyDown = function (ev) {
+    var value = Number(this.element.value);
+
+    if (isNaN(value))
+        return;
+
     switch (ev.key) {
     case "ArrowUp":
-        if (this._view.getSelection() === null)
-            break;
-
-        var value = Number(this._input.value) + 1;
-
-        if (isNaN(value) || (this._positive && value < 0))
-            break;
-
-        this._input.value = value;
-        this._view.getSelection()[this._name] = value;
-        this._view.triggerChange();
+        ++value;
         break;
     case "ArrowDown":
-        if (this._view.getSelection() === null)
-            break;
-
-        var value = Number(this._input.value) - 1;
-
-        if (isNaN(value) || (this._positive && value < 0))
-            break;
-
-        this._input.value = value;
-        this._view.getSelection()[this._name] = value;
-        this._view.triggerChange();
+        --value;
         break;
+    default:
+        return;
     }
-};
 
-function TextInputElement(view, name) {
-    view.onSelectionChanged(this._dataChanged.bind(this));
-    view.onDataChanged(this._dataChanged.bind(this));
-
-    var input = document.createElement("input");
-    input.type = "text";
-
-    input.addEventListener("change", this._onChange.bind(this));
-
-    this._view = view;
-    this._input = input;
-    this._name = name;
-
-    this._dataChanged();
-}
-
-TextInputElement.prototype.getElement = function () {
-    return this._input;
-};
-
-TextInputElement.prototype._dataChanged = function () {
-    if (this._view.getSelection() === null) {
-        this._input.disabled = true;
-        this._input.value = "";
-    }
-    else {
-        var item = this._view.getSelection();
-
-        this._input.disabled = false;
-        this._input.value = item[this._name];
-    }
-};
-
-TextInputElement.prototype._onChange = function () {
-    if (this._view.getSelection()[this._name] === this._input.value)
+    if (!this.validator(value))
         return;
 
-    this._view.getSelection()[this._name] = this._input.value;
-    this._view.triggerChange();
+    this.element.value = value.toString();
+    this._inputChanged();
 };
 
-function SelectInputElement(view, name, options) {
-    view.onSelectionChanged(this._dataChanged.bind(this));
-    view.onDataChanged(this._dataChanged.bind(this));
+function TextInputElement() {
+    var element = document.createElement("input");
+    element.type = "text";
+    element.value = "";
 
-    var select = document.createElement("select");
+    element.addEventListener("change", this._inputChanged.bind(this));
+    element.addEventListener("keyup", this._inputChanged.bind(this));
 
-    for (var i = 0; i < options.length; ++i) {
-        var option = document.createElement("option");
-        option.text = options[i].name;
-        option.value = options[i].value;
-        select.options.add(option);
-    }
+    Object.defineProperty(this, "value", {
+        get: function() { return this._value; },
+        set: this._setValue
+    });
 
-    select.addEventListener("change", this._onChange.bind(this));
+    Object.defineProperty(this, "disabled", {
+        get: function() { return this.element.disabled; },
+        set: this._setDisabled
+    });
 
-    this._view = view;
-    this._select = select;
-    this._name = name;
+    this.element = element;
+    this.validator = function () { return true };
 
-    this._dataChanged();
+    this._value = "";
+    this._onChange = [];
 }
 
-SelectInputElement.prototype.getElement = function () {
-    return this._select;
+TextInputElement.prototype.onChange = function (cb) {
+    this._onChange.push(cb);
 };
 
-SelectInputElement.prototype._dataChanged = function () {
-    if (this._view.getSelection() === null) {
-        this._select.selectedIndex = -1;
-        this._select.disabled = true;
+TextInputElement.prototype._setValue = function (value) {
+    if (this._value !== value) {
+        this._value = value;
+        this.element.value = value.toString();
+        this._validate();
     }
-    else {
-        var value = this._view.getSelection()[this._name];
+};
 
-        this._select.selectedIndex = -1;
+TextInputElement.prototype._setDisabled = function (disabled) {
+    if (this.element.disabled !== disabled) {
+        this.element.disabled = disabled;
 
-        for (var i = 0; i < this._select.options.length; ++i) {
-            if (this._select.options[i].value === value) {
-                this._select.selectedIndex = i;
-                break;
-            }
+        if (disabled) {
+            this.element.value = "";
+            this.element.classList.remove("invalid");
         }
-
-        this._select.disabled = false;
+        else {
+            this.element.value = this.value.toString();
+            this._validate();
+        }
     }
 };
 
-SelectInputElement.prototype._onChange = function () {
-    if (this._view.getSelection() === null)
-        return;
+TextInputElement.prototype._validate = function () {
+    this.element.classList.remove("invalid");
 
-    if (this._select.selectedOptions.length < 1)
-        return;
-
-    var value = this._select.selectedOptions[0].value;
-
-    if (this._view.getSelection()[this._name] == value)
-        return;
-
-    this._view.getSelection()[this._name] = value;
-    this._view.triggerChange();
-};
-
-function RowElement(view, text, element, types) {
-    if (types !== undefined && types.length > 0) {
-        view.onSelectionChanged(this._dataChanged.bind(this));
-        view.onDataChanged(this._dataChanged.bind(this));
+    if (!this.validator(this.element.value)) {
+        this.element.classList.add("invalid");
+        return false;
     }
 
-    var row = document.createElement("div");
-    row.classList.add("row");
+    return true;
+};
 
-    var cell = document.createElement("div");
-    cell.classList.add("cell");
-    cell.innerText = text;
-    row.appendChild(cell);
+TextInputElement.prototype._inputChanged = function () {
+    if (this._validate()) {
+        this._value = this.element.value;
+        this._triggerChange();
+    }
+};
 
-    var elementCell = document.createElement("div");
-    elementCell.classList.add("cell");
-    elementCell.appendChild(element);
-    row.appendChild(elementCell);
+TextInputElement.prototype._triggerChange = function () {
+    for (var i = 0; i < this._onChange.length; ++i)
+        this._onChange[i].call(this);
+};
 
-    this._row = row;
-    this._view = view;
-    this._types = types;
+function SelectElement(options) {
+    var element = document.createElement("select");
+    var keys = Object.keys(options);
 
-    if (types !== undefined && types.length > 0)
-        this._dataChanged();
+    for (var i = 0; i < keys.length; ++i) {
+        if (options.hasOwnProperty(keys[i])) {
+            var option = document.createElement("option");
+            option.text = options[keys[i]];
+            option.value = keys[i];
+            element.options.add(option);
+        }
+    }
+
+    element.addEventListener("change", this._selectChanged.bind(this));
+
+    Object.defineProperty(this, "value", {
+        get: function() { return this._value; },
+        set: this._setValue
+    });
+
+    Object.defineProperty(this, "disabled", {
+        get: function() { return this.element.disabled; },
+        set: this._setDisabled
+    });
+
+    this.element = element;
+
+    this._value = "";
+    this._onChange = [];
 }
 
-RowElement.prototype.getElement = function () {
-    return this._row;
+SelectElement.prototype.onChange = function (cb) {
+    this._onChange.push(cb);
 };
 
-RowElement.prototype._dataChanged = function () {
-    this._row.style.display = "none";
+SelectElement.prototype._setValue = function (value) {
+    if (this._value !== value) {
+        this._value = value;
+        this.element.value = value;
+    }
+};
 
-    if (this._view.getSelection() === null)
-        return;
+SelectElement.prototype._setDisabled = function (disabled) {
+    if (this.element.disabled !== disabled) {
+        this.element.disabled = disabled;
 
-    if (this._types.indexOf(this._view.getSelection().type) < 0)
-        return;
+        if (disabled)
+            this.element.selectedIndex = -1;
+        else
+            this.element.value = this.value;
+    }
+};
 
-    this._row.style.display = "table-row";
+SelectElement.prototype._selectChanged = function () {
+    this._value = this.element.value;
+    this._triggerChange();
+};
+
+SelectElement.prototype._triggerChange = function () {
+    for (var i = 0; i < this._onChange.length; ++i)
+        this._onChange[i].call(this);
 };
 
 function ButtonRowElement(view) {
@@ -413,9 +415,10 @@ ButtonRowElement.prototype._add = function () {
         width: 1,
         height: 1,
         postid: 0,
-        url: '',
-        icon: '',
-        type: 'post'
+        url: "",
+        icon: "",
+        type: "post",
+        title: ""
     });
 
     this._view.triggerChange();
@@ -461,7 +464,7 @@ function Tiles(element) {
     var input = element.getElementsByClassName("data")[0];
     var iconInput = element.getElementsByClassName("data-icons")[0];
 
-    var view = new TilesView(JSON.parse(input.value));
+    var view = new TilesView(this._cleanData(JSON.parse(input.value)));
     view.onDataChanged(this._onChange.bind(this));
 
     new Display(element, view);
@@ -476,55 +479,128 @@ Tiles.prototype._createFrom = function (element, icons) {
     var form = document.createElement("div");
     form.classList.add("item-data");
 
-    var iconEntries = [];
+    var type = new SelectElement({ "post": "Post", "url": "URL" });
+    var x = new NumberInputElement();
+    var y = new NumberInputElement();
+    var w = new NumberInputElement();
+    var h = new NumberInputElement();
+    var title = new TextInputElement();
+    var postid = new NumberInputElement();
+    var url = new TextInputElement();
+    var icon = new SelectElement(icons);
 
-    for (var key in icons)
-        iconEntries.push({
-            name: icons[key],
-            value: key
-        });
+    w.validator = h.validator = function (n) {
+        return n >= 0;
+    };
 
-    var type = new SelectInputElement(this._view, "type", [
-        { "name": "Post", "value": "post" },
-        { "name": "URL", "value": "url" }
-    ]);
+    this._bind(type, "type");
+    this._bind(x, "x");
+    this._bind(y, "y");
+    this._bind(w, "width");
+    this._bind(h, "height");
+    this._bind(title, "title");
+    this._bind(postid, "postid");
+    this._bind(url, "url");
+    this._bind(icon, "icon");
 
-    var icon = new SelectInputElement(this._view, "icon", iconEntries);
-
-    var x = new NumberInputElement(this._view, "x");
-    var y = new NumberInputElement(this._view, "y");
-    var w = new NumberInputElement(this._view, "width", true);
-    var h = new NumberInputElement(this._view, "height", true);
-    var title = new TextInputElement(this._view, "title");
-    var postid = new NumberInputElement(this._view, "postid");
-    var url = new TextInputElement(this._view, "url");
-
-    var rows = [
-        new RowElement(this._view, (i18n.type || "Type") + ":", type.getElement()),
-        new RowElement(this._view, (i18n.x || "X") + ":", x.getElement()),
-        new RowElement(this._view, (i18n.y || "Y") + ":", y.getElement()),
-        new RowElement(this._view, (i18n.width || "Width") + ":", w.getElement()),
-        new RowElement(this._view, (i18n.height || "Height") + ":", h.getElement()),
-        new RowElement(this._view, (i18n.title || "Title") + ":", title.getElement()),
-        new RowElement(this._view, (i18n.post || "Post ID") + ":", postid.getElement(), [ "post" ]),
-        new RowElement(this._view, (i18n.url || "URL") + ":", url.getElement(), [ "url" ]),
-        new RowElement(this._view, (i18n.icon || "Icon") + ":", icon.getElement(), [ "url" ]),
-        new ButtonRowElement(this._view)
-    ];
-
-    for (var i = 0; i < rows.length; ++i)
-        form.appendChild(rows[i].getElement());
+    form.appendChild(this._createRow((i18n.type || "Type") + ":", type));
+    form.appendChild(this._createRow((i18n.x || "X") + ":", x));
+    form.appendChild(this._createRow((i18n.y || "Y") + ":", y));
+    form.appendChild(this._createRow((i18n.width || "Width") + ":", w));
+    form.appendChild(this._createRow((i18n.height || "Height") + ":", h));
+    form.appendChild(this._createRow((i18n.title || "Title") + ":", title));
+    form.appendChild(this._createRow((i18n.post || "Post ID") + ":", postid));
+    form.appendChild(this._createRow((i18n.url || "URL") + ":", url));
+    form.appendChild(this._createRow((i18n.icon || "Icon") + ":", icon));
+    form.appendChild((new ButtonRowElement(this._view)).getElement());
 
     element.appendChild(form);
 };
 
+Tiles.prototype._bind = function (element, field) {
+    var _this = this;
+
+    element.onChange(function () {
+        if (_this._view.getSelection()) {
+            _this._view.getSelection()[field] = this.value;
+            _this._view.triggerChange();
+        }
+    });
+
+    function fieldEnabled(type, field) {
+        switch (field) {
+        case "postid":
+            return type === "post";
+        case "url":
+        case "icon":
+            return type === "url";
+        }
+
+        return true;
+    }
+
+    function update() {
+        var selection = _this._view.getSelection();
+
+        if (selection) {
+            element.value = selection[field];
+            element.disabled = !fieldEnabled(selection.type, field);
+        }
+        else
+            element.disabled = true;
+    }
+
+    this._view.onDataChanged(update);
+    this._view.onSelectionChanged(update);
+    update();
+};
+
+Tiles.prototype._createRow = function (title, element) {
+    // Create HTML elements
+    var row = document.createElement("div");
+    row.classList.add("row");
+
+    var cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.innerText = title;
+    row.appendChild(cell);
+
+    var elementCell = document.createElement("div");
+    elementCell.classList.add("cell");
+    elementCell.appendChild(element.element);
+    row.appendChild(elementCell);
+
+    function update() {
+        if (element.disabled)
+            row.classList.add("disabled");
+        else
+            row.classList.remove("disabled");
+    }
+
+    this._view.onDataChanged(update);
+    this._view.onSelectionChanged(update);
+
+    return row;
+};
+
 Tiles.prototype._onChange = function () {
     this._input.value = JSON.stringify(this._view.getData());
+};
 
-    // Fire change event to trigger save button
-    var event = document.createEvent("HTMLEvents");
-    event.initEvent("change", true, false);
-    this._input.dispatchEvent(event);
+Tiles.prototype._cleanData = function (data) {
+    return data.map(function (tile) {
+        return {
+            type: typeof tile.type === "undefined" ? "" : tile.type.toString(),
+            x: isNaN(tile.x) ? 0 : Number(tile.x),
+            y: isNaN(tile.y) ? 0 : Number(tile.y),
+            width: isNaN(tile.width) ? 0 : Number(tile.width),
+            height: isNaN(tile.height) ? 0 : Number(tile.height),
+            title: typeof tile.title === "undefined" ? "" : tile.title.toString(),
+            postid: isNaN(tile.postid) ? 0 : Number(tile.postid),
+            url: typeof tile.url === "undefined" ? "" : tile.url.toString(),
+            icon: typeof tile.icon === "undefined" ? "" : tile.icon.toString()
+        };
+    });
 };
 
 Tiles.initialize = function () {

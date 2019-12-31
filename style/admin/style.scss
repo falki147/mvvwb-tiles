@@ -41,6 +41,11 @@
             .cell {
                 display: table-cell;
                 vertical-align: middle;
+                padding-top: 6px;
+            }
+
+            &.disabled {
+                color: #999;
             }
 
             &.button-row {
