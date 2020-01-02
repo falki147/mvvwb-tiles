@@ -1,5 +1,13 @@
 var i18n = window.mvvwbTilesI18n || {};
 
+/**
+ * Manages the tiles data.
+ *
+ * It also handles the selection of a single tile and triggers callbacks, when the data or the
+ * selectiion has changed.
+ *
+ * @param data 
+ */
 function TilesView(data) {
     this._data = data;
     this._selectedData = null;
@@ -7,6 +15,10 @@ function TilesView(data) {
     this._onDataChanged = [];
 }
 
+/**
+ * Sets the selected tile data object
+ * @param data the data or null, when nothing is selected
+ */
 TilesView.prototype.setSelection = function (data) {
     if (this._selectedData === data)
         return;
@@ -17,27 +29,56 @@ TilesView.prototype.setSelection = function (data) {
         this._onSelectionChanged[i](data);
 };
 
+/**
+ * Returns the selected tile data
+ * @return the data or null, when nothing is selected
+ */
 TilesView.prototype.getSelection = function () {
     return this._selectedData;
 };
 
+/**
+ * Triggers the change callbacks
+ */
 TilesView.prototype.triggerChange = function () {
     for (var i = 0; i < this._onDataChanged.length; ++i)
         this._onDataChanged[i](this._data);
 };
 
+/**
+ * Registers a new callback for when the selection changes
+ *
+ * The first parameter, that is passed to the handler is the newly selected data.
+ *
+ * @param handler the callback
+ */
 TilesView.prototype.onSelectionChanged = function (handler) {
     this._onSelectionChanged.push(handler);
 };
 
+/**
+ * Registers a new callback for when the data changes
+ *
+ * The first parameter, that is passed to the handler is the data object.
+ *
+ * @param handler the callback
+ */
 TilesView.prototype.onDataChanged = function (handler) {
     this._onDataChanged.push(handler);
 };
 
+/**
+ * Gets the data object
+ */
 TilesView.prototype.getData = function () {
     return this._data;
 };
 
+/**
+ * Handles the displaying of the tiles
+ * @param element the element to attach to
+ * @param {TilesView} view the view of the data
+ */
 function Display(element, view) {
     view.onDataChanged(this._display.bind(this));
     view.onSelectionChanged(this._select.bind(this));
@@ -59,6 +100,10 @@ function Display(element, view) {
     this._display();
 }
 
+/**
+ * Callback for when the selection has changed
+ * @param data the selected data or null
+ */
 Display.prototype._select = function (data) {
     var ind = this._view.getData().indexOf(data);
     var items = this._container.getElementsByClassName("item");
@@ -72,6 +117,11 @@ Display.prototype._select = function (data) {
     items[ind].classList.add("selected");
 };
 
+/**
+ * Creates the tiles elements
+ *
+ * It also deltes all the previous elements
+ */
 Display.prototype._display = function () {
     var data = this._view.getData();
     var selection = this._view.getSelection();
@@ -110,6 +160,11 @@ Display.prototype._display = function () {
     this._container.appendChild(element);
 };
 
+/**
+ * Calculate the bounds of the tiles
+ * @param data the tiles data
+ * @return an obect containing x, y, width and height
+ */
 Display.prototype._getBounds = function (data) {
     if (!data.length)
         return { x: 0, y: 0, width: 0, height: 0 };
@@ -129,6 +184,15 @@ Display.prototype._getBounds = function (data) {
     return { x: x1, y: y1, width: x2 - x1, height: y2 - y1 };
 };
 
+/**
+ * Input element which is specialized for numbers
+ *
+ * @property {Number} value the currently set value. Defaults to 0.
+ * @property {Boolean} disabled indicates if the input is disabled or not
+ * @property {*} element the input fields element
+ * @property {Function} validator validates the input. This function is called with one parameter,
+ * the new value, and should return true, if the value is valid.
+ */
 function NumberInputElement() {
     var element = document.createElement("input");
     element.type = "text";
@@ -155,10 +219,18 @@ function NumberInputElement() {
     this._onChange = [];
 }
 
+/**
+ * Registers a new callback for when the value changes
+ * @param handler the callback
+ */
 NumberInputElement.prototype.onChange = function (cb) {
     this._onChange.push(cb);
 };
 
+/**
+ * Sets the value and validates it
+ * @param value the new value
+ */
 NumberInputElement.prototype._setValue = function (value) {
     if (this._value !== value) {
         this._value = value;
@@ -167,6 +239,10 @@ NumberInputElement.prototype._setValue = function (value) {
     }
 };
 
+/**
+ * Enables or disables the input field
+ * @param disabled if true, disable the field
+ */
 NumberInputElement.prototype._setDisabled = function (disabled) {
     if (this.element.disabled !== disabled) {
         this.element.disabled = disabled;
@@ -182,6 +258,10 @@ NumberInputElement.prototype._setDisabled = function (disabled) {
     }
 };
 
+/**
+ * Validates the input
+ * @return true, if it is valid
+ */
 NumberInputElement.prototype._validate = function () {
     this.element.classList.remove("invalid");
 
@@ -193,6 +273,9 @@ NumberInputElement.prototype._validate = function () {
     return true;
 };
 
+/**
+ * Check if the input from the user is valid and trigger callback if it is
+ */
 NumberInputElement.prototype._inputChanged = function () {
     if (this._validate()) {
         this._value = Number(this.element.value);
@@ -200,11 +283,17 @@ NumberInputElement.prototype._inputChanged = function () {
     }
 };
 
+/**
+ * Trigger the changed callbacks
+ */
 NumberInputElement.prototype._triggerChange = function () {
     for (var i = 0; i < this._onChange.length; ++i)
         this._onChange[i].call(this);
 };
 
+/**
+ * In/decrease number with the arrow keys
+ */
 NumberInputElement.prototype._keyDown = function (ev) {
     var value = Number(this.element.value);
 
@@ -229,6 +318,15 @@ NumberInputElement.prototype._keyDown = function (ev) {
     this._inputChanged();
 };
 
+/**
+ * Input element which is specialized for text inputs
+ *
+ * @property {String} value the currently set value. Defaults to "".
+ * @property {Boolean} disabled indicates if the input is disabled or not
+ * @property {*} element the input fields element
+ * @property {Function} validator validates the input. This function is called with one parameter,
+ * the new value, and should return true, if the value is valid.
+ */
 function TextInputElement() {
     var element = document.createElement("input");
     element.type = "text";
@@ -254,10 +352,18 @@ function TextInputElement() {
     this._onChange = [];
 }
 
+/**
+ * Registers a new callback for when the value changes
+ * @param handler the callback
+ */
 TextInputElement.prototype.onChange = function (cb) {
     this._onChange.push(cb);
 };
 
+/**
+ * Sets the value and validates it
+ * @param value the new value
+ */
 TextInputElement.prototype._setValue = function (value) {
     if (this._value !== value) {
         this._value = value;
@@ -266,6 +372,10 @@ TextInputElement.prototype._setValue = function (value) {
     }
 };
 
+/**
+ * Enables or disables the input field
+ * @param disabled if true, disable the field
+ */
 TextInputElement.prototype._setDisabled = function (disabled) {
     if (this.element.disabled !== disabled) {
         this.element.disabled = disabled;
@@ -281,6 +391,10 @@ TextInputElement.prototype._setDisabled = function (disabled) {
     }
 };
 
+/**
+ * Validates the input
+ * @return true, if it is valid
+ */
 TextInputElement.prototype._validate = function () {
     this.element.classList.remove("invalid");
 
@@ -292,6 +406,9 @@ TextInputElement.prototype._validate = function () {
     return true;
 };
 
+/**
+ * Check if the input from the user is valid and trigger callback if it is
+ */
 TextInputElement.prototype._inputChanged = function () {
     if (this._validate()) {
         this._value = this.element.value;
@@ -299,11 +416,22 @@ TextInputElement.prototype._inputChanged = function () {
     }
 };
 
+/**
+ * Trigger the changed callbacks
+ */
 TextInputElement.prototype._triggerChange = function () {
     for (var i = 0; i < this._onChange.length; ++i)
         this._onChange[i].call(this);
 };
 
+/**
+ * Combobox control
+ * @param {Object} options the individual options
+ *
+ * @property {String} value the currently set value. Defaults to "".
+ * @property {Boolean} disabled indicates if the control is disabled or not
+ * @property {*} element the controls element
+ */
 function SelectElement(options) {
     var element = document.createElement("select");
     var keys = Object.keys(options);
@@ -335,10 +463,18 @@ function SelectElement(options) {
     this._onChange = [];
 }
 
+/**
+ * Registers a new callback for when the value changes
+ * @param handler the callback
+ */
 SelectElement.prototype.onChange = function (cb) {
     this._onChange.push(cb);
 };
 
+/**
+ * Sets the value of the control
+ * @param value the new value
+ */
 SelectElement.prototype._setValue = function (value) {
     if (this._value !== value) {
         this._value = value;
@@ -346,6 +482,10 @@ SelectElement.prototype._setValue = function (value) {
     }
 };
 
+/**
+ * Enables or disables the input field
+ * @param disabled if true, disable the field
+ */
 SelectElement.prototype._setDisabled = function (disabled) {
     if (this.element.disabled !== disabled) {
         this.element.disabled = disabled;
@@ -357,16 +497,26 @@ SelectElement.prototype._setDisabled = function (disabled) {
     }
 };
 
+/**
+ * Sets the internal value and triggers the change callback
+ */
 SelectElement.prototype._selectChanged = function () {
     this._value = this.element.value;
     this._triggerChange();
 };
 
+/**
+ * Trigger the changed callbacks
+ */
 SelectElement.prototype._triggerChange = function () {
     for (var i = 0; i < this._onChange.length; ++i)
         this._onChange[i].call(this);
 };
 
+/**
+ * A row with buttons to delete or add new tiles
+ * @param {TilesView} view the view of the data
+ */
 function ButtonRowElement(view) {
     view.onSelectionChanged(this._onSelectionChanged.bind(this));
 
@@ -402,10 +552,17 @@ function ButtonRowElement(view) {
     this._onSelectionChanged(view.getSelection());
 }
 
+/**
+ * Gets the container element of the row
+ * @return the element
+ */
 ButtonRowElement.prototype.getElement = function () {
     return this._row;
 };
 
+/**
+ * Adds a new tile
+ */
 ButtonRowElement.prototype._add = function () {
     var pos = this._getNewTilePosition();
 
@@ -424,6 +581,10 @@ ButtonRowElement.prototype._add = function () {
     this._view.triggerChange();
 };
 
+/**
+ * Calculates the position of the new tile
+ * @return {Object} an object containing x and y positions
+ */
 ButtonRowElement.prototype._getNewTilePosition = function () {
     var data = this._view.getData();
 
@@ -441,6 +602,9 @@ ButtonRowElement.prototype._getNewTilePosition = function () {
     return { x: x, y: y };
 };
 
+/**
+ * Deletes the currently selected tile
+ */
 ButtonRowElement.prototype._delete = function () {
     if (this._view.getSelection() === null)
         return;
@@ -454,10 +618,21 @@ ButtonRowElement.prototype._delete = function () {
     }
 };
 
+/**
+ * Enables/disables the delte button, depending on if something is selected or not
+ */
 ButtonRowElement.prototype._onSelectionChanged = function (data) {
     this._deleteButton.disabled = data === null;
 };
 
+/**
+ * Sets the editor up
+ * 
+ * It initializes it with the data from the "data"-input element found inside the parent element and
+ * creates the required components. The icon data is taken from the "data-icons" element.
+ * 
+ * @param {*} element the parent element
+ */
 function Tiles(element) {
     element.classList.add("initialized");
 
@@ -475,6 +650,11 @@ function Tiles(element) {
     this._createFrom(element, JSON.parse(iconInput.value));
 }
 
+/**
+ * Creates the form
+ * @param element the parent element
+ * @param {Object} icons an object with the icon values and names
+ */
 Tiles.prototype._createFrom = function (element, icons) {
     var form = document.createElement("div");
     form.classList.add("item-data");
@@ -517,6 +697,16 @@ Tiles.prototype._createFrom = function (element, icons) {
     element.appendChild(form);
 };
 
+/**
+ * Binds the input element to a certain field
+ * 
+ * This means, that when the data changes, the input field is automatically updated. It also updates
+ * the data, when the user is entering something. This function also disables/enables the input
+ * field depending on when it is needed.
+ * 
+ * @param element the input element
+ * @param {String} field the name of the field
+ */
 Tiles.prototype._bind = function (element, field) {
     var _this = this;
 
@@ -555,6 +745,11 @@ Tiles.prototype._bind = function (element, field) {
     update();
 };
 
+/**
+ * Creates a table row containing a title and an input element
+ * @param {String} title the title of the row
+ * @param element the element of the row
+ */
 Tiles.prototype._createRow = function (title, element) {
     // Create HTML elements
     var row = document.createElement("div");
@@ -583,10 +778,21 @@ Tiles.prototype._createRow = function (title, element) {
     return row;
 };
 
+/**
+ * Stores the data in the hidden input element, when it changes
+ */
 Tiles.prototype._onChange = function () {
     this._input.value = JSON.stringify(this._view.getData());
 };
 
+/**
+ * Sanitizes the data, which is coming from the input field
+ * 
+ * E.g. it sets default values when the field doesn't exist or has an invalid type
+ * 
+ * @param {Array} data
+ * @return {Array} the sanitized data
+ */
 Tiles.prototype._cleanData = function (data) {
     return data.map(function (tile) {
         return {
@@ -603,6 +809,9 @@ Tiles.prototype._cleanData = function (data) {
     });
 };
 
+/**
+ * Initializes already present tiles and adds a callback to "load" to rerun it again
+ */
 Tiles.initialize = function () {
     function initializeAll(root) {
         var elements = root.getElementsByClassName("mvvwb-tiles");

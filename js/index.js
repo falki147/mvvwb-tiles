@@ -1,4 +1,9 @@
 (function (document, Image) {
+    /**
+     * Execute callback when image was loaded
+     * @param src image source
+     * @param cb callback
+     */
     function loaded(src, cb) {
         var image = new Image();
         image.src = src;
@@ -11,6 +16,11 @@
             });
     }
 
+    /**
+     * Execute callback when all the tiles have loaded
+     * @param parent container element of the tiles
+     * @param cb callback
+     */
     function tilesLoaded(parent, cb) {
         var tiles = parent.getElementsByClassName("tile");
         var imageSources = [];
@@ -31,11 +41,19 @@
             });
     }
 
+    /**
+     * Check if element is hidden
+     * @param element
+     * @return true, if it is
+     */
     function isHidden(element) {
         return window.getComputedStyle(element).display === "none";
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    /**
+     * Set loaded class on container element, when all images of the tiles were loaded
+     */
+    function checkTiles() {
         var tiles = document.getElementsByClassName("tiles");
 
         for (var i = 0; i < tiles.length; ++i) {
@@ -49,5 +67,8 @@
                 }).bind(this, tiles[i]));
             }
         }
-    });
+    }
+
+    // Bind event
+    document.addEventListener("DOMContentLoaded", checkTiles);
 })(document, Image);
