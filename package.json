@@ -1,6 +1,6 @@
 {
   "name": "mvvwb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Template for the mvvwb.at site",
   "private": true,
   "scripts": {

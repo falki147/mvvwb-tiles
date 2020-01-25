@@ -192,9 +192,10 @@ class TilesWidget extends \WP_Widget {
                 $post = null;
 
                 if ($tile->postid < 0) {
-                    $post = wp_get_recent_posts(
-                        [ 'numberposts' => 1, 'offset' => -1 - $tile->postid ], OBJECT
-                    );
+                    $post = wp_get_recent_posts([
+                        'numberposts' => 1, 'offset' => -1 - $tile->postid,
+                        'post_status' => 'publish'
+                    ], OBJECT);
 
                     if ($post === false)
                         $post = null;
