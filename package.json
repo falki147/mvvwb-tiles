@@ -10,10 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "hammerjs": "^2.0.8",
-    "moment-timezone": "^0.5.26"
+    "moment-timezone": "^0.5.27"
   },
   "devDependencies": {
-    "autoprefixer": "^9.6.1",
+    "autoprefixer": "^9.7.4",
     "gettext-parser": "^4.0.2",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
