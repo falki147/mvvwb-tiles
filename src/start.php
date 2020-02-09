@@ -23,12 +23,12 @@ if (!defined('MVVWB_TILES_ADMIN_VIEWS')) {
     define('MVVWB_TILES_ADMIN_VIEWS', implode(DIRECTORY_SEPARATOR, [ __DIR__, 'MVVWB', 'Tiles', 'Views', 'Admin', '' ]));
 }
 
-if (!defined('MVVWB_TILES_TRANLATIONS')) {
+if (!defined('MVVWB_TILES_TRANSLATIONS')) {
     /** Path to the translations. It can be directly passed to load_plugin_textdomain. */
     $currentDir = str_replace('\\', '/', __DIR__);
     $wpDir = str_replace('\\', '/', WP_PLUGIN_DIR);
 
-    define('MVVWB_TILES_TRANLATIONS', str_replace($wpDir, '', $currentDir));
+    define('MVVWB_TILES_TRANSLATIONS', str_replace($wpDir, '', $currentDir));
 }
 
 if (!defined('MVVWB_TILES_AUTOLOAD')) {

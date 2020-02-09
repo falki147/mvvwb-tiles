@@ -25,7 +25,7 @@ class RegisterHelper {
      * Setup translations, scripts and post type
      */
     private static function setup() {
-        load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANLATIONS);
+        load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANSLATIONS);
 
         wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css');
         wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js');
