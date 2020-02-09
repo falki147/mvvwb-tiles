@@ -10,7 +10,7 @@ if (!defined('MVVWB_TILES_BASE')) {
 
 if (!defined('MVVWB_TILES_VERSION')) {
     /** Version of this template */
-    define('MVVWB_TILES_VERSION', '1.0.1');
+    define('MVVWB_TILES_VERSION', '{{version}}');
 }
 
 if (!defined('MVVWB_TILES_VIEWS')) {
