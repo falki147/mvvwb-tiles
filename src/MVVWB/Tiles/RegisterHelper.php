@@ -27,11 +27,20 @@ class RegisterHelper {
     private static function setup() {
         load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANSLATIONS);
 
-        wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css');
-        wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js');
+        wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css', [], MVVWB_TILES_VERSION);
+        wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js', [], MVVWB_TILES_VERSION);
 
-        wp_register_style('mvvwb-tiles-admin', MVVWB_TILES_BASE . 'admin.css');
-        wp_register_script('mvvwb-tiles-admin', MVVWB_TILES_BASE . 'admin.js');
+        wp_register_style(
+            'mvvwb-tiles-admin',
+            MVVWB_TILES_BASE . 'admin.css', [],
+            MVVWB_TILES_VERSION
+        );
+        
+        wp_register_script(
+            'mvvwb-tiles-admin',
+            MVVWB_TILES_BASE . 'admin.js', [],
+            MVVWB_TILES_VERSION
+        );
 
         wp_localize_script('mvvwb-tiles-admin', 'mvvwbTilesI18n', [
             'delete' => __('Delete', 'mvvwb-tiles'),
