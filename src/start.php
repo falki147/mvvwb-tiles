@@ -4,12 +4,12 @@
  */
 
 if (!defined('MVVWB_TILES_BASE')) {
-    /** Base path of the template */
+    /** Base path of the plugin */
     define('MVVWB_TILES_BASE', plugin_dir_url(__FILE__));
 }
 
 if (!defined('MVVWB_TILES_VERSION')) {
-    /** Version of this template */
+    /** Version of this plugin */
     define('MVVWB_TILES_VERSION', '{{version}}');
 }
 
