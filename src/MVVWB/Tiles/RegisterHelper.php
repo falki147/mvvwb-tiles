@@ -19,6 +19,8 @@ class RegisterHelper {
         add_action('add_meta_boxes', function () { self::addMetaBoxes(); });
         add_action('save_post', function ($postID) { self::saveMetaBoxes($postID); });
         add_action('plugins_loaded', function () { self::setup(); });
+        add_action('wp_enqueue_scripts', function () { self::registerScripts(); });
+        add_action('admin_enqueue_scripts', function () { self::registerAdminScripts(); });
     }
 
     /**
@@ -26,21 +28,6 @@ class RegisterHelper {
      */
     private static function setup() {
         load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANSLATIONS);
-
-        wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css', [], MVVWB_TILES_VERSION);
-        wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js', [], MVVWB_TILES_VERSION);
-
-        wp_register_style(
-            'mvvwb-tiles-admin',
-            MVVWB_TILES_BASE . 'admin.css', [],
-            MVVWB_TILES_VERSION
-        );
-        
-        wp_register_script(
-            'mvvwb-tiles-admin',
-            MVVWB_TILES_BASE . 'admin.js', [],
-            MVVWB_TILES_VERSION
-        );
 
         wp_localize_script('mvvwb-tiles-admin', 'mvvwbTilesI18n', [
             'delete' => __('Delete', 'mvvwb-tiles'),
@@ -75,6 +62,31 @@ class RegisterHelper {
             'show_in_rest'      => false,
             'menu_icon'         => 'dashicons-layout'
         ]);
+    }
+
+    /**
+     * Register general styles and scripts
+     */
+    private static function registerScripts() {
+        wp_register_style('mvvwb-tiles', MVVWB_TILES_BASE . 'style.css', [], MVVWB_TILES_VERSION);
+        wp_register_script('mvvwb-tiles', MVVWB_TILES_BASE . 'index.js', [], MVVWB_TILES_VERSION);
+    }
+
+    /**
+     * Register admin styles and scripts
+     */
+    private static function registerAdminScripts() {
+        wp_register_style(
+            'mvvwb-tiles-admin',
+            MVVWB_TILES_BASE . 'admin.css', [],
+            MVVWB_TILES_VERSION
+        );
+        
+        wp_register_script(
+            'mvvwb-tiles-admin',
+            MVVWB_TILES_BASE . 'admin.js', [],
+            MVVWB_TILES_VERSION
+        );
     }
 
     /**
