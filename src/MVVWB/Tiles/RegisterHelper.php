@@ -29,20 +29,6 @@ class RegisterHelper {
     private static function setup() {
         load_plugin_textdomain('mvvwb-tiles', false, MVVWB_TILES_TRANSLATIONS);
 
-        wp_localize_script('mvvwb-tiles-admin', 'mvvwbTilesI18n', [
-            'delete' => __('Delete', 'mvvwb-tiles'),
-            'add'    => __('Add', 'mvvwb-tiles'),
-            'type'   => __('Type', 'mvvwb-tiles'),
-            'x'      => __('X', 'mvvwb-tiles'),
-            'y'      => __('Y', 'mvvwb-tiles'),
-            'width'  => __('Width', 'mvvwb-tiles'),
-            'height' => __('Height', 'mvvwb-tiles'),
-            'title'  => __('Title', 'mvvwb-tiles'),
-            'post'   => __('Post ID', 'mvvwb-tiles'),
-            'url'    => __('URL', 'mvvwb-tiles'),
-            'icon'   => __('Icon', 'mvvwb-tiles')
-        ]);
-
         register_post_type('tiles', [
             'labels' => [
                 'name'      => __('Tiles', 'mvvwb-tiles'),
@@ -87,6 +73,20 @@ class RegisterHelper {
             MVVWB_TILES_BASE . 'admin.js', [],
             MVVWB_TILES_VERSION
         );
+
+        wp_localize_script('mvvwb-tiles-admin', 'mvvwbTilesI18n', [
+            'delete' => __('Delete', 'mvvwb-tiles'),
+            'add'    => __('Add', 'mvvwb-tiles'),
+            'type'   => __('Type', 'mvvwb-tiles'),
+            'x'      => __('X', 'mvvwb-tiles'),
+            'y'      => __('Y', 'mvvwb-tiles'),
+            'width'  => __('Width', 'mvvwb-tiles'),
+            'height' => __('Height', 'mvvwb-tiles'),
+            'title'  => __('Title', 'mvvwb-tiles'),
+            'post'   => __('Post ID', 'mvvwb-tiles'),
+            'url'    => __('URL', 'mvvwb-tiles'),
+            'icon'   => __('Icon', 'mvvwb-tiles')
+        ]);
     }
 
     /**
