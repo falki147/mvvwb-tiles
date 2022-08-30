@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "hammerjs": "^2.0.8",
-    "moment-timezone": "^0.5.27"
+    "moment-timezone": "^0.5.35"
   },
   "devDependencies": {
     "autoprefixer": "^9.7.4",
